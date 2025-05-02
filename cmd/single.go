@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var singleThreads int
+
 // singleCmd represents the single command
 var singleCmd = &cobra.Command{
 	Use:   "single host protocol",
@@ -17,9 +19,8 @@ var singleCmd = &cobra.Command{
 		host := args[0]
 		protocol := args[1]
 		var foundPorts []int
-		if threads != 1000 || timeout != 1000 {
-			fmt.Printf("Using custom parameters! Threads:%d Timeout:%d\n", threads, timeout)
-			foundPorts = scanners.ScanHost(host, protocol, timeout, threads)
+		if singleThreads != 100 || timeout != 1000 {
+			foundPorts = scanners.ScanHost(host, protocol, timeout, singleThreads)
 		} else {
 			foundPorts = scanners.ScanHost(host, protocol, 1000, 100)
 		}
@@ -31,5 +32,6 @@ var singleCmd = &cobra.Command{
 }
 
 func init() {
+	singleCmd.Flags().IntVar(&singleThreads, "threads", 100, "Total goroutines to use")
 	rootCmd.AddCommand(singleCmd)
 }
