@@ -37,10 +37,9 @@ func init() {
 	// will be global for your application.
 
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ngomap.yaml)")
-	// TODO: make threads work
 
-	rootCmd.PersistentFlags().IntVar(&threads, "threads", 1000, "The amout of threads (gorutines) to use")
-	rootCmd.PersistentFlags().IntVar(&timeout, "timeout", 1000, "The amout of threads (gorutines) to use")
+	rootCmd.PersistentFlags().IntVar(&threads, "threads", 100, "The amount of threads (gorutines) to use")
+	rootCmd.PersistentFlags().IntVar(&timeout, "timeout", 1000, "The maximum time (in ms) to wait for a port response")
 	//  Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")

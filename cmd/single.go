@@ -17,12 +17,11 @@ var singleCmd = &cobra.Command{
 		host := args[0]
 		protocol := args[1]
 		var foundPorts []int
-		// TODO: Add custom thread count support
 		if threads != 1000 || timeout != 1000 {
 			fmt.Printf("Using custom parameters! Threads:%d Timeout:%d\n", threads, timeout)
-			foundPorts = scanners.ScanHost(host, protocol, timeout)
+			foundPorts = scanners.ScanHost(host, protocol, timeout, threads)
 		} else {
-			foundPorts = scanners.ScanHost(host, protocol, 1000)
+			foundPorts = scanners.ScanHost(host, protocol, 1000, 100)
 		}
 
 		for _, port := range foundPorts {
