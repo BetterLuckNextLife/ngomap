@@ -11,14 +11,10 @@ var threadsPerHost int
 
 // networkCmd represents the network command
 var networkCmd = &cobra.Command{
-	Use:   "network",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "network ip mask protocol",
+	Short: "Scan all hosts in a network for open ports",
+	Long:  `Scan a single host for any open ports using a specified protocol. For example: ngomap network 192.168.1.0 24 tcp`,
+	Args:  cobra.ExactArgs(3),
 	Run: func(cmd *cobra.Command, args []string) {
 		address := args[0]
 		mask := (args[1])
@@ -38,7 +34,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	networkCmd.Flags().IntVar(&threadsPerHost, "threads-per-host", 100, "Number of goroutines to use per host")
-	networkCmd.Flags().IntVar(&amount, "amount", 1, "The amount of hosts to scan simultaneously")
+	networkCmd.Flags().IntVar(&threadsPerHost, "threads-per-host", defaultThreads, "Number of goroutines to use per host")
+	networkCmd.Flags().IntVar(&amount, "amount", defaultAmount, "The amount of hosts to scan simultaneously")
 	rootCmd.AddCommand(networkCmd)
 }

@@ -10,14 +10,15 @@ var threads int
 var amount int
 var timeout int
 
+var defaultThreads int = 100
+var defaultAmount = 1
+var defaultTimeout int = 1000
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "ngomap",
-	Short: "My own attempt at writing an efficient network scanner in Go",
-	//TODO: Add long description
-	Long: `ADD DESCRIPTION HERE For example:
-
-	`,
+	Short: "A network scanner written in go, focusing on the simplicity",
+	Long:  `Scan individual hosts or whole networks for open ports`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -33,14 +34,5 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ngomap.yaml)")
-
 	rootCmd.PersistentFlags().IntVar(&timeout, "timeout", 1000, "The maximum time (in ms) to wait for a port response")
-	//  Cobra also supports local flags, which will only run
-	// when this action is called directly.
-
 }
