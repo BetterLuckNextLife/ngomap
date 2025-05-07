@@ -21,6 +21,27 @@ func ScanPort(host string, port int, protocol string, timeout int) (int, bool) {
 	}
 }
 
+// Grabs a banner from port as a string
+func GrabBanner(host string, port string) (bool, string) {
+	address := host + ":" + port
+
+	conn, err := net.DialTimeout("tcp", address, 1*time.Second)
+	if err != nil {
+		return false, ""
+	}
+	defer conn.Close()
+
+	_ = conn.SetReadDeadline(time.Now().Add(2 * time.Second))
+
+	buffer := make([]byte, 1024)
+	n, err := conn.Read(buffer)
+	if err != nil {
+		return false, ""
+	}
+
+	return true, string(buffer[:n])
+}
+
 // Scans all the ports on a host, returns a slice of found ports
 func ScanHost(host, protocol string, timeout int, workerCount int) []int {
 	fmt.Printf("\033[1m\033[34m[*]\033[0m Scanning host %s\n", host)
