@@ -19,9 +19,6 @@ var rootCmd = &cobra.Command{
 	Use:   "ngomap",
 	Short: "A network scanner written in go, focusing on the simplicity",
 	Long:  `Scan individual hosts or whole networks for open ports`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
