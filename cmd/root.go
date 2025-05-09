@@ -10,9 +10,9 @@ var threads int
 var amount int
 var timeout int
 
-var defaultThreads int = 100
+var defaultThreads int = 1000
 var defaultAmount = 1
-var defaultTimeout int = 1000
+var defaultTimeout int = 500
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
