@@ -21,6 +21,24 @@ func ScanPort(host string, port int, protocol string, timeout int) (int, bool) {
 	}
 }
 
+func ScanPortRAW(host string, port uint16, protocol string, timeout int) (int, bool) {
+	localIP, err := GetOutIP()
+	if err != nil {
+		return 0, false
+	}
+	packet, err := BuildSYN(string(localIP), host, port, port)
+	if err != nil {
+		return 0, false
+	}
+	fmt.Print(packet)
+	err = SendRawPacket(host+string(port), packet)
+	if err != nil {
+		return int(port), false
+	} else {
+		return int(port), true
+	}
+}
+
 // Grabs a banner from port as a string
 func GrabBanner(host string, port string) (bool, string) {
 	address := host + ":" + port
