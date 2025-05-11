@@ -7,16 +7,16 @@ import (
 	"github.com/google/gopacket/layers"
 )
 
-func BuildSYN(srcIP, dstIP string, srcPort, dstPort uint16) ([]byte, error) {
+func BuildSYN(srcIP net.IP, dstIP string, srcPort, dstPort int) ([]byte, error) {
 	ip := &layers.IPv4{
-		SrcIP:    net.ParseIP(srcIP),
+		SrcIP:    srcIP,
 		DstIP:    net.ParseIP(dstIP),
 		Protocol: layers.IPProtocolTCP,
 	}
 
 	tcp := &layers.TCP{
-		SrcPort: layers.TCPPort(srcPort),
-		DstPort: layers.TCPPort(dstPort),
+		SrcPort: layers.TCPPort(uint16(srcPort)),
+		DstPort: layers.TCPPort(uint16(dstPort)),
 		SYN:     true,
 	}
 

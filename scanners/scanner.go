@@ -2,6 +2,7 @@ package scanners
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"strconv"
 	"sync"
@@ -21,18 +22,21 @@ func ScanPort(host string, port int, protocol string, timeout int) (int, bool) {
 	}
 }
 
-func ScanPortRAW(host string, port uint16, protocol string, timeout int) (int, bool) {
-	localIP, err := GetOutIP()
+func ScanPortRAW(host string, port int, protocol string, timeout int) (int, bool) {
+	localIP, err := GetOutIP(host, protocol)
 	if err != nil {
+		log.Println(err.Error())
 		return 0, false
 	}
-	packet, err := BuildSYN(string(localIP), host, port, port)
+	packet, err := BuildSYN(localIP, host, port, port)
 	if err != nil {
+		log.Println(err.Error())
 		return 0, false
 	}
-	fmt.Print(packet)
-	err = SendRawPacket(host+string(port), packet)
+	fmt.Println(packet)
+	err = SendRawPacket(host+":"+strconv.Itoa(port), packet)
 	if err != nil {
+		log.Println(err.Error())
 		return int(port), false
 	} else {
 		return int(port), true

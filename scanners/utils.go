@@ -2,6 +2,7 @@ package scanners
 
 import (
 	"encoding/binary"
+	"fmt"
 	"net"
 )
 
@@ -21,13 +22,29 @@ type ScanResult struct {
 	Ports []int
 }
 
-func GetOutIP() (net.IP, error) {
-	conn, err := net.Dial("tcp", "8.8.8.8:80")
+func GetOutIP(target, protocol string) (net.IP, error) {
+	var conn net.Conn
+	var err error
+
+	switch protocol {
+	case "tcp":
+		conn, err = net.Dial("tcp", target+":22")
+	case "udp":
+		conn, err = net.Dial("udp", target+":53")
+	default:
+		return nil, fmt.Errorf("unsupported protocol %s", protocol)
+	}
 	if err != nil {
 		return nil, err
 	}
 	defer conn.Close()
 
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	return localAddr.IP, nil
+	switch v := conn.LocalAddr().(type) {
+	case *net.TCPAddr:
+		return v.IP, nil
+	case *net.UDPAddr:
+		return v.IP, nil
+	default:
+		return nil, fmt.Errorf("unsupported address type: %T", v)
+	}
 }
