@@ -20,3 +20,14 @@ type ScanResult struct {
 	IP    uint32
 	Ports []int
 }
+
+func GetOutIP() (net.IP, error) {
+	conn, err := net.Dial("tcp", "8.8.8.8:80")
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+	return localAddr.IP, nil
+}
