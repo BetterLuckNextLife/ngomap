@@ -17,10 +17,10 @@ var networkCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(3),
 	Run: func(cmd *cobra.Command, args []string) {
 		address := args[0]
-		mask := (args[1])
 		protocol := args[2]
+		mask := (args[1])
 		var ScanResults []scanners.ScanResult
-		if threads != 100 || timeout != 1000 {
+		if threads != defaultThreads || timeout != defaultTimeout {
 			fmt.Printf("Using custom parameters! Threads:%d Timeout:%d\n", threadsPerHost, timeout)
 		}
 		ScanResults = scanners.ScanNetwork(address, mask, protocol, timeout, amount, threadsPerHost)

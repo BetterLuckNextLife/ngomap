@@ -21,21 +21,18 @@ func ScanPort(host string, port int, protocol string, timeout int) (int, bool) {
 	}
 }
 
-func ScanPortRAW(host string, port int, protocol string, timeout int) (int, bool) {
-	localIP, err := GetOutIP(host, protocol)
+func ScanPortRAW(localIP net.IP, host string, port int, protocol string, timeout int) (int, bool) {
+	packet, err := BuildSYN(localIP, host, 12345, port)
 	if err != nil {
-		return 0, false
-	}
-	packet, err := BuildSYN(localIP, host, port, port)
-	if err != nil {
+		fmt.Printf("BuildSYN error on port %d: %v\n", port, err)
 		return 0, false
 	}
 	err = SendRawPacket(host+":"+strconv.Itoa(port), packet)
 	if err != nil {
+		fmt.Printf("SendRawPacket error on port %d: %v\n", port, err)
 		return int(port), false
-	} else {
-		return int(port), true
 	}
+	return int(port), true
 }
 
 // Grabs a banner from port as a string
@@ -63,6 +60,12 @@ func GrabBanner(host string, port string) (bool, string) {
 func ScanHost(host, protocol string, timeout int, workerCount int) []int {
 	fmt.Printf("\033[1m\033[34m[*]\033[0m Scanning host %s\n", host)
 
+	localIP, err := GetOutIP(host)
+	if err != nil {
+		fmt.Printf("Failed to get local IP for %s: %v\n", host, err)
+		return nil
+	}
+
 	var wg sync.WaitGroup
 
 	// Create a job channel and fill it with queued for scan
@@ -85,7 +88,7 @@ func ScanHost(host, protocol string, timeout int, workerCount int) []int {
 			defer wg.Done()
 			for port := range jobs {
 				//fmt.Printf("Starting scan on %d\n", port)
-				_, open := ScanPortRAW(host, port, protocol, timeout)
+				_, open := ScanPortRAW(localIP, host, port, protocol, timeout)
 				bar.Add(1)
 				if open {
 					result <- port

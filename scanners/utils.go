@@ -4,6 +4,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
+
+	"github.com/vishvananda/netlink"
 )
 
 func IpToUint32(ip net.IP) uint32 {
@@ -22,29 +24,11 @@ type ScanResult struct {
 	Ports []int
 }
 
-func GetOutIP(target, protocol string) (net.IP, error) {
-	var conn net.Conn
-	var err error
-
-	switch protocol {
-	case "tcp":
-		conn, err = net.Dial("tcp", target+":22")
-	case "udp":
-		conn, err = net.Dial("udp", target+":53")
-	default:
-		return nil, fmt.Errorf("unsupported protocol %s", protocol)
+func GetOutIP(target string) (net.IP, error) {
+	dst := net.ParseIP(target)
+	routes, err := netlink.RouteGet(dst)
+	if err != nil || len(routes) == 0 {
+		return nil, fmt.Errorf("route not found: %v", err)
 	}
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Close()
-
-	switch v := conn.LocalAddr().(type) {
-	case *net.TCPAddr:
-		return v.IP, nil
-	case *net.UDPAddr:
-		return v.IP, nil
-	default:
-		return nil, fmt.Errorf("unsupported address type: %T", v)
-	}
+	return routes[0].Src, nil
 }
