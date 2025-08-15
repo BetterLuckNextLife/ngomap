@@ -122,8 +122,12 @@ func ScanNetwork(address string, mask string, protocol string, timeout int, work
 	var wg sync.WaitGroup
 
 	jobs := make(chan uint32, workerCount)
-	mask_int, _ := strconv.Atoi(mask)
-	hostCount := uint32(1 << (32 - mask_int))
+maskInt, err := strconv.Atoi(mask)
+if err != nil || maskInt < 0 || maskInt > 32 {
+    fmt.Printf("Invalid mask: %s\n", mask)
+    return nil
+}
+hostCount := uint32(1 << (32 - maskInt))
 	ip := net.ParseIP(address)
 
 	go func() {
