@@ -10,7 +10,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
-// Scans a ports and if it is open writes it to a channel
+// Scans a port and if it is open writes it to a channel
 func ScanPort(host string, port int, protocol string, timeout int) (int, bool) {
 	address := host + ":" + strconv.Itoa(port)
 	_, err := net.DialTimeout(protocol, address, time.Duration(timeout)*time.Millisecond)
@@ -21,16 +21,16 @@ func ScanPort(host string, port int, protocol string, timeout int) (int, bool) {
 	}
 }
 
-// Scans a ports using raw SYN packets and if it is open writes it to a channel
+// Scans a port using raw SYN packets and if it is open writes it to a channel
 func ScanPortRAW(localIP net.IP, host string, port int, protocol string, timeout int) (int, bool) {
 	packet, err := BuildSYN(localIP, host, 12345, port)
 	if err != nil {
-		fmt.Printf("BuildSYN error on port %d: %v\n", port, err)
+		//fmt.Printf("BuildSYN error on port %d: %v\n", port, err)
 		return 0, false
 	}
 	err = SendRawPacket(host+":"+strconv.Itoa(port), packet)
 	if err != nil {
-		fmt.Printf("SendRawPacket error on port %d: %v\n", port, err)
+		//fmt.Printf("SendRawPacket error on port %d: %v\n", port, err)
 		return int(port), false
 	}
 	return int(port), true
@@ -87,7 +87,7 @@ func ScanHost(host, protocol string, timeout int, workerCount int) []int {
 		go func() {
 			defer wg.Done()
 			for port := range jobs {
-				_, open := ScanPortRAW(localIP.String(), port, protocol, timeout)
+				_, open := ScanPortRAW(localIP, host, port, protocol, timeout)
 				bar.Add(1)
 				if open {
 					result <- port
